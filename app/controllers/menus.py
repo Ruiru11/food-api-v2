@@ -15,7 +15,7 @@ class Menus(object):
                                 (meal_id, data['name'], data['description']))
             print("INSERTING DATA into MEALS")
             response_object = {
-                "status":""
+                "status":"Item Added to Menu "
             }
             return(make_response(jsonify(response_object)))
             
