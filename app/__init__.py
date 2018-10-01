@@ -18,4 +18,5 @@ def create_app(config_name):
     app.register_blueprint(mod_orders)
     app.register_blueprint(mod_users)
     app.register_blueprint(mod_menus)
+    db
     return app
