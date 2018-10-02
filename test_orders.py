@@ -1,5 +1,6 @@
 import unittest
 import json
+import jwt
 from app import create_app, db
 
 class OrdersTestCase(unittest.TestCase):
@@ -8,63 +9,67 @@ class OrdersTestCase(unittest.TestCase):
     def setUp(self):
         self.app = create_app(config_name="test")
         self.client = self.app.test_client
+        self.menu_data = {
+            "name":"ugali",
+            "description":"sweet"
+        }
         self.data = {
             "item":"mbuzi",
             "description":"fry",
             "cost":"500","user_id":"1",
             "order_id":"7"
             }
+        self.user_data = {
+            "email":"shs@mail.com",
+            "password":"shssss",
+            "address":"utawala",
+            "username":"ruiru"
+        }
+        self.login_data = {
+            "email":"shs@mail.com",
+            "password":"shssss"
+        }
 
 
         with self.app.app_context():
             db.create_tables()
 
-    def register_user(self,email='verbose@gmail.com', password='newhere', address='utawala'):
-        user_data = {
-            'email':email,
-            'password':password,
-            'address':address
-        }
-        return self.client().post('api/v2/signup', data=user_data)
-        
-    
-    def login_user(self,email='verbose@gmail.com', password='newhere'):
-        user_data = {
-            'emai':email,
-            'password':password
-        }
-        return self.client().post('api/v2/signin',data=user_data)
-     
-    
-    def test_order_creation(self):
+    def test_create_new_user(self):
         res = self.client().post(
-            "/api/v2/orders",
-            data=json.dumps(self.data),
+            "api/v2/signup",
+            data=json.dumps(self.user_data),
+            headers={"content-type": "application/json"}
+
+        )
+        self.assertEqual(res.status_code,200)
+    
+    def get_user_token(self):
+        res = self.client().post(
+            "api/v2/signin",
+            data=json.dumps(self.login_data),
             headers={"content-type": "application/json"}
         )
-        result = json.loads(res.data.decode('utf-8'))
-        self.assertEqual(res.status_code,200)
-        #self.assertEqual(result['message'], 'order created successfully')
+        response = json.loads(res.data.decode('utf-8'))['token']
+        return response
+        
 
-    def test_get_all_orders(self):
-        res = self.client().get(
-            "api/v2/orders",
-            headers = {"content-type":"application/json"}
+    def test_create_menu(self):
+        #tests if an menu is created succsefully
+        token = self.get_user_token()
+        res = self.client().post(
+            "/api/v2/menus",
+            data=json.dumps(self.menu_data),
+            headers={
+                "content-type": "application/json",
+                "Authorization": token
+
+            }
         )
-        result = json.loads(res.data.decode('utf-8'))
-        print("sdhjd",result)
         self.assertEqual(res.status_code,200)
+       
+
     
-    def test_get_an_order_by_id(self):
-        res = self.client().get(
-            "api/v2/orders/1",
-            headers = {"content-type":"apllication/json"}
-        )
-        self.assertEqual(res.status_code,200)
-       
-       
-       
-
+    
 
 if __name__ == '__main__':
     unittest.main()
