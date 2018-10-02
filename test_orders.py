@@ -3,6 +3,7 @@ import json
 import jwt
 from app import create_app, db
 
+
 class OrdersTestCase(unittest.TestCase):
     """Represesnts orders and menu testcase """
 
@@ -10,26 +11,26 @@ class OrdersTestCase(unittest.TestCase):
         self.app = create_app(config_name="test")
         self.client = self.app.test_client
         self.menu_data = {
-            "name":"ugali",
-            "description":"sweet"
+            "name": "ugali",
+            "description": "sweet"
         }
-        self.data = {
-            "item":"mbuzi",
-            "description":"fry",
-            "cost":"500","user_id":"1",
-            "order_id":"7"
-            }
+        self.order_data = {
+            "user_id": "7",
+            "item": "fries",
+            "order_id": "10",
+            "description": "served hot",
+            "cost": "120"
+        }
         self.user_data = {
-            "email":"shs@mail.com",
-            "password":"shssss",
-            "address":"utawala",
-            "username":"ruiru"
+            "email": "shs@mail.com",
+            "password": "shssss",
+            "address": "utawala",
+            "username": "ruiru"
         }
         self.login_data = {
-            "email":"shs@mail.com",
-            "password":"shssss"
+            "email": "shs@mail.com",
+            "password": "shssss"
         }
-
 
         with self.app.app_context():
             db.create_tables()
@@ -41,8 +42,8 @@ class OrdersTestCase(unittest.TestCase):
             headers={"content-type": "application/json"}
 
         )
-        self.assertEqual(res.status_code,200)
-    
+        self.assertEqual(res.status_code, 200)
+
     def get_user_token(self):
         res = self.client().post(
             "api/v2/signin",
@@ -51,10 +52,9 @@ class OrdersTestCase(unittest.TestCase):
         )
         response = json.loads(res.data.decode('utf-8'))['token']
         return response
-        
 
     def test_create_menu(self):
-        #tests if an menu is created succsefully
+        # tests if an menu is created succsefully
         token = self.get_user_token()
         res = self.client().post(
             "/api/v2/menus",
@@ -65,11 +65,21 @@ class OrdersTestCase(unittest.TestCase):
 
             }
         )
-        self.assertEqual(res.status_code,200)
-       
+        self.assertEqual(res.status_code, 200)
 
-    
-    
+    def test_create_order(self):
+        # test if an order gets created
+        token = self.get_user_token()
+        res = self.client().post(
+            "/api/v2/orders",
+            data=json.dumps(self.order_data),
+            headers={
+                "content-type": "application/json",
+                "Authorization": token
+            }
+        )
+        self.assertEqual(res.status_code, 200)
+
 
 if __name__ == '__main__':
     unittest.main()
