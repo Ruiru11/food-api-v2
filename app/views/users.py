@@ -20,7 +20,7 @@ def signup():
 def signin():
     parser = reqparse.RequestParser()
     parser.add_argument('email',type=str, required=True, help="Pease provide an email", location="json")
-    parser.add_argument('password',type=str,required=True, help="Pease provide a password",location="json")
+    parser.add_argument('password',type=str, required=True, help="Pease provide an password", location="json")
     data = parser.parse_args()
     return usr.sign_in(data)
 
