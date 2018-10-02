@@ -81,7 +81,7 @@ class OrdersTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 200)
 
     def test_get_orders(self):
-        # test if an order gets created
+        # test if orders can be retrieved
         token = self.get_user_token()
         res = self.client().get(
             "/api/v2/orders",
@@ -91,6 +91,28 @@ class OrdersTestCase(unittest.TestCase):
             }
         )
         self.assertEqual(res.status_code, 200)
+
+    def test_get_orders_by_id(self):
+        # test if an order can be accessed using its id
+        token = self.get_user_token()
+        res = self.client().get(
+            "/api/v2/orders/7",
+            headers={
+                "content-type": "application/json",
+                "Authorization": token
+            }
+        )
+        self.assertEqual(res.status_code, 200)
+
+    def test_get_orders_by_id_without_token(self):
+        # test if order can be gotten without authorization
+        res = self.client().get(
+            "/api/v2/orders/7",
+            headers={
+                "content-type": "application/json",
+            }
+        )
+        self.assertEqual(res.status_code, 401)
 
 
 if __name__ == '__main__':
