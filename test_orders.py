@@ -80,6 +80,18 @@ class OrdersTestCase(unittest.TestCase):
         )
         self.assertEqual(res.status_code, 200)
 
+    def test_get_orders(self):
+        # test if an order gets created
+        token = self.get_user_token()
+        res = self.client().get(
+            "/api/v2/orders",
+            headers={
+                "content-type": "application/json",
+                "Authorization": token
+            }
+        )
+        self.assertEqual(res.status_code, 200)
+
 
 if __name__ == '__main__':
     unittest.main()
