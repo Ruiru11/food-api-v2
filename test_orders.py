@@ -8,6 +8,12 @@ class OrdersTestCase(unittest.TestCase):
     def setUp(self):
         self.app = create_app(config_name="test")
         self.client = self.app.test_client
+        self.data = {
+            "item":"mbuzi",
+            "description":"fry",
+            "cost":"500","user_id":"1",
+            "order_id":"7"
+            }
 
 
         with self.app.app_context():
@@ -20,8 +26,7 @@ class OrdersTestCase(unittest.TestCase):
             'address':address
         }
         return self.client().post('api/v2/signup', data=user_data)
-        result = json.loads(res.user_data.decode('utf-8'))
-        print(result)
+        
     
     def login_user(self,email='verbose@gmail.com', password='newhere'):
         user_data = {
@@ -32,20 +37,30 @@ class OrdersTestCase(unittest.TestCase):
      
     
     def test_order_creation(self):
-        data =  {
-            "item":"mbuzi",
-            "description":"fry",
-            "cost":"500","user_id":"1",
-            "order_id":"7"
-            }
         res = self.client().post(
             "/api/v2/orders",
-            data=json.dumps(data),
+            data=json.dumps(self.data),
             headers={"content-type": "application/json"}
         )
         result = json.loads(res.data.decode('utf-8'))
         self.assertEqual(res.status_code,200)
         #self.assertEqual(result['message'], 'order created successfully')
+
+    def test_get_all_orders(self):
+        res = self.client().get(
+            "api/v2/orders",
+            headers = {"content-type":"application/json"}
+        )
+        result = json.loads(res.data.decode('utf-8'))
+        print("sdhjd",result)
+        self.assertEqual(res.status_code,200)
+    
+    def test_get_an_order_by_id(self):
+        res = self.client().get(
+            "api/v2/orders/1",
+            headers = {"content-type":"apllication/json"}
+        )
+        self.assertEqual(res.status_code,200)
        
        
        
