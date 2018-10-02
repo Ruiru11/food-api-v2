@@ -70,6 +70,7 @@ class Users(object):
                     'message':'Please check your password'
                 }
                 return(make_response(jsonify(response)))
+                
     def generate_token(self, id, username, role):
         """Generate authentication token."""
         payload = {
@@ -90,7 +91,6 @@ class Users(object):
         def decorator(*args, **kwargs):
             try:
                 token = request.headers.get('Authorization')
-                print('token>>>>>>>>>>',token)
                 payload = jwt.decode(token, 'qwertyuiop')
                 user_id = payload['sub']
                 self.connection.cursor.execute(
