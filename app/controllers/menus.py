@@ -11,9 +11,12 @@ class Menus(object):
     def create_menu(self, data):
         try:
             meal_id = str(uuid.uuid4())
-            self.connection.cursor.execute("""INSERT INTO meals(meal_id, name, description)
-            VALUES(%s, %s, %s);""",
-                                           (meal_id, data['name'], data['description']))
+            self.connection.cursor.execute("""INSERT INTO meals(meal_id, name, description, price)
+            VALUES(%s, %s, %s, %s);""",
+                                           (meal_id,
+                                            data['name'],
+                                            data['description'],
+                                            data['price']))
             print("INSERTING DATA into MEALS")
             response_object = {
                 "status": "Item Added to Menu "
@@ -31,6 +34,7 @@ class Menus(object):
         return(jsonify(news))
 
     def get_menus(self, id):
+        print('id', id)
         self.connection.cursor.execute(
             "SELECT * FROM  meals WHERE meal_id=%s", [id]
         )
