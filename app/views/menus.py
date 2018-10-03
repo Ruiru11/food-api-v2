@@ -11,9 +11,11 @@ usr = Users()
 
 @mod_menus.route('/menus', methods=['POST'])
 @usr.logged_in
-def create_menu(res=None, user_id=None):
+@usr.check_admin
+def create_menu(res=None, user_id=None, user_role=None):
     parser = reqparse.RequestParser()
     parser.add_argument('name', type=str, location='json')
+    parser.add_argument('price', type=int, location='json')
     parser.add_argument('description', type=str, location='json')
     data = parser.parse_args()
 
@@ -26,7 +28,8 @@ def get_menu(res=None, user_id=None):
     return mnu.get_menu()
 
 
-@mod_menus.route('/menus/<int:id>', methods=['GET'])
+@mod_menus.route('/menus/<id>', methods=['GET'])
 @usr.logged_in
-def get_menus(id):
+@usr.check_admin
+def get_menus(id, res=None, user_id=None, user_role=None):
     return mnu.get_menus(id)
