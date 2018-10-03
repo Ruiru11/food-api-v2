@@ -1,6 +1,7 @@
 from flask import jsonify, make_response
 from app.models.Database import Database_connection
 import psycopg2
+import uuid
 
 
 class Orders(object):
@@ -9,9 +10,15 @@ class Orders(object):
 
     def create_order(self, data):
         try:
-            self.connection.cursor.execute("""INSERT INTO ORDERS (order_id, status, user_id, cost, description, item) 
+            order_id = uuid.uuid4()
+            self.connection.cursor.execute("""INSERT INTO ORDERS (order_id, status,
+                            user_id, cost, description, item) 
             VALUES (%s, %s, %s, %s, %s, %s);""",
-                                           (data['order_id'], 'inprogress', data['user_id'], data['cost'], data['description'], data['item']))
+                                           (str(order_id),
+                                            'inprogress',
+                                            data['user_id'],
+                                            data['cost'], data['description'],
+                                            data['item']))
             print("Inserting DATA into ORDERS")
             response_object = {
                 "satus": "pass",
@@ -23,12 +30,18 @@ class Orders(object):
             print("ERROR inserting into ORDERS", error)
             response_object = {
                 "satus": "fail",
-                "message": "Entry with same id already exists or wrong format used"
+                "message": "Email already registered"
             }
             return(make_response(jsonify(response_object)))
 
     def get_orders(self):
         self.connection.cursor.execute("""SELECT * FROM orders""")
+        response = self.connection.cursor.fetchall()
+        return(jsonify(response))
+
+    def get_user_orders(self, id):
+        self.connection.cursor.execute(
+            "SELECT * FROM orders WHERE user_id=%s ", [id])
         response = self.connection.cursor.fetchall()
         return(jsonify(response))
 
@@ -43,7 +56,7 @@ class Orders(object):
             "UPDATE orders SET status='complete' WHERE order_id=%s", [id])
         response_object = {
             "satus": "pass",
-            "message": "status update passed"
+            "message": "status update complete"
         }
         return(make_response(jsonify(response_object)))
 
