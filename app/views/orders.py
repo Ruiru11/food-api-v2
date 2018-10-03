@@ -14,7 +14,7 @@ mod_orders = Blueprint('orders', __name__, url_prefix='/api/v2')
 @usr.logged_in
 def create_order(res=None, user_id=None):
     parser = reqparse.RequestParser()
-    parser.add_argument('user_id', type=int, location="json")
+    parser.add_argument('user_id', user_id)
     parser.add_argument('item', type=str, location="json")
     parser.add_argument('order_id', type=int, location="json")
     parser.add_argument('description', type=str, location="json")
@@ -26,23 +26,34 @@ def create_order(res=None, user_id=None):
 
 @mod_orders.route('/orders', methods=['GET'])
 @usr.logged_in
-def get_orders(res=None, user_id=None):
+@usr.check_admin
+def get_orders(res=None, user_id=None, user_role=None):
     return order_instance.get_orders()
 
 
-@mod_orders.route('/orders/<int:id>', methods=['GET'])
+@mod_orders.route('/orders/<id>', methods=['GET'])
 @usr.logged_in
-def get_order(id, res=None, user_id=None):
+@usr.check_admin
+def get_order(id, res=None, user_id=None, user_role=None):
     return order_instance.get_order(id)
 
 
-@mod_orders.route('/orders/<int:id>', methods=['PUT'])
+@mod_orders.route('/orders/<id>', methods=['PUT'])
 @usr.logged_in
-def update_order(id, res=None, user_id=None):
+@usr.check_admin
+def update_order(id, res=None, user_id=None, user_role=None):
     return order_instance.update_order(id)
 
 
-@mod_orders.route('/orders/<int:id>', methods=['DELETE'])
+@mod_orders.route('/orders/<id>', methods=['DELETE'])
 @usr.logged_in
-def delete_order(id, res=None, user_id=None):
+@usr.check_admin
+def delete_order(id, res=None, user_id=None, user_role=None):
     return order_instance.delete_order(id)
+
+
+@mod_orders.route('/user-orders/<id>', methods=['GET'])
+@usr.logged_in
+@usr.check_admin
+def user_orders(id, res=None, user_id=None, user_role=None):
+    return order_instance.get_user_orders(id)
