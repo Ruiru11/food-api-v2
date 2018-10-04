@@ -10,7 +10,7 @@ class MenusTestCase(unittest.TestCase):
         self.app = create_app(config_name="test")
         self.client = self.app.test_client
         self.menu_data = {
-            "name": "waru",
+            "name": "naramat",
             "description": "sweet",
             "price": "500"
         }
