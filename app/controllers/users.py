@@ -22,13 +22,55 @@ class Users(object):
                 "status": "fail",
                 "message": "Please enter a valid email"
             }
+            return(make_response(jsonify(response_object)), 403)
+        elif len(email) == '':
+            response_object = {
+                "status": "fail",
+                "message": " email cannot be empty"
+            }
+            return(make_response(jsonify(response_object)))
+        else:
+            return True
+
+    def validate_password(self, password):
+        match = re.match(r'[a-z]{4,}', password)
+        if match is None:
+
+            response_object = {
+                "status": "fail",
+                "message": "password must have a number one upercase letter and not less than 8 characters"
+            }
+            return(make_response(jsonify(response_object)))
+        elif len(password) == '':
+            response_object = {
+                "status": "fail",
+                "message": " password cannot be empty"
+            }
+            return(make_response(jsonify(response_object)), 403)
+        else:
+            return True
+
+    def validate_username(self, username):
+        if len(username) < 4:
+            response_object = {
+                "status": "fail",
+                "message": "username to short"
+            }
+            return(make_response(jsonify(response_object)))
+        elif len(username) > 7:
+            response_object = {
+                "status": "fail",
+                "message": "username too long"
+            }
             return(make_response(jsonify(response_object)))
         else:
             return True
 
     def create_user(self, data):
+        username = self.validate_username(data['username'])
         email = self.validate_email(data['email'])
-        if email is True:
+        password = self.validate_password(data['email'])
+        if email and password and username is True:
             try:
                 user_id = uuid.uuid4()
                 print(data)
@@ -45,7 +87,7 @@ class Users(object):
                     "status": "pass",
                     "message": "user added succesfuly"
                 }
-                return(make_response(jsonify(response_object)))
+                return(make_response(jsonify(response_object)), 201)
             except (Exception, psycopg2.DatabaseError) as error:
                 print(error)
                 response_object = {
@@ -53,8 +95,14 @@ class Users(object):
                     "message": "Email already registered"
                 }
                 return(make_response(jsonify(response_object)))
-        else:
+        elif password is not True:
+            return password
+        elif email is not True:
             return email
+        elif username is not True:
+            return username
+        else:
+            return email and password and username
 
     def all_users(self):
         self.connection.cursor.execute("""SELECT * FROM users""")
@@ -140,6 +188,12 @@ class Users(object):
                     'message': 'Wrong Token or expired Token please login'
                 }
                 return make_response(jsonify(responseObject), 401)
+            except jwt.exceptions.DecodeError:
+                responseObject = {
+                    'status': 'Fail',
+                    'message': 'Invalid token type'
+                }
+                return make_response(jsonify(responseObject), 500)
             return func(*args, **kwargs)
         return decorator
 
