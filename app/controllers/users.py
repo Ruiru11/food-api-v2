@@ -161,7 +161,7 @@ class Users(object):
                         'status': 'fail',
                         'message': 'Un-authorized Access only Admin allowed'
                     }
-                    return make_response(jsonify(responseObject))
+                    return make_response(jsonify(responseObject),401)
             except jwt.ExpiredSignatureError:
                 responseObject = {
                     'status': 'Fail',
