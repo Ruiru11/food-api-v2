@@ -33,6 +33,28 @@ pip install -r requirements.txt
 
 
 # Endpoints: 
+## user-signup(POST) :
+- route: http://127.0.0.1:5000/api/v2/signup
+- data is enetred in json format{ "username","password","email","address"}
+ ## user-signin(POST):
+- route:http://127.0.0.1:5000/api/v2/signin
+- data is eneterd in json format{ "email","password"}
+ ## creating an order(POST):
+- route:http://127.0.0.1:5000/api/v2/orders
+- data is eneterd in json format{"item","cost","description"}
+ ## getting all orders(GET):
+- route:http://127.0.0.1:5000/api/v2/orders
+ ## getting a specific order using its id(GET):
+- route:http://127.0.0.1:5000/api/v2/orders/id
+ ## deleting an oder(use its specific id)(DELETE):
+- route:http://127.0.0.1:5000/api/v2/orders/id
+ ## updating an order(use its specific id)(PUT):
+- route:http://127.0.0.1:5000/api/v2/orders/id
+- status is changed from starting to delivered
+- input is in json format{"status" "deliverd"}
+
+* use the given endpoints, data should be from postman  
+
 
 
 # Running the api
