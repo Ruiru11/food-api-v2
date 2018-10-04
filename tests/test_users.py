@@ -11,7 +11,7 @@ class UsersTestCase(unittest.TestCase):
         self.client = self.app.test_client
 
         self.user_data = {
-            "email": "shs@mail.com",
+            "email": "yyy@mail.com",
             "password": "shssss",
             "address": "utawala",
             "username": "ruiru"
@@ -25,7 +25,7 @@ class UsersTestCase(unittest.TestCase):
         }
 
         self.signin_data = {
-            "email": "shs@mail.com",
+            "email": "yyy@mail.com",
             "password": "shssss"
         }
 
@@ -38,8 +38,7 @@ class UsersTestCase(unittest.TestCase):
             data=json.dumps(self.new_data),
             headers={"content-type": "application/json"}
         )
-        self.assertEqual(res.status_code, 200)
-    
+        self.assertEqual(res.status_code, 403)
 
     def test_user_signup(self):
         res = self.client().post(
@@ -47,7 +46,7 @@ class UsersTestCase(unittest.TestCase):
             data=json.dumps(self.user_data),
             headers={"content-type": "application/json"}
         )
-        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.status_code, 201)
 
     def test_user_signin(self):
         res = self.client().post(
