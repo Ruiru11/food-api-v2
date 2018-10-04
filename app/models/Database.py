@@ -4,7 +4,6 @@ from app import bcrypt
 import uuid
 
 
-
 class Database_connection():
     def __init__(self):
         try:
