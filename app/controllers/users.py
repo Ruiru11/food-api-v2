@@ -69,7 +69,7 @@ class Users(object):
         if not user:
             response = {
                 'status': 'fail',
-                'message': 'Email used is not registered'
+                'message': 'Email not registered create an account'
             }
             return(make_response(jsonify(response)))
         else:
@@ -89,7 +89,7 @@ class Users(object):
             else:
                 response = {
                     'status': 'fail',
-                    'message': 'Please check your password'
+                    'message': 'Incorrect password!!'
                 }
                 return(make_response(jsonify(response)))
 
@@ -137,7 +137,7 @@ class Users(object):
             except jwt.ExpiredSignatureError:
                 responseObject = {
                     'status': 'Fail',
-                    'message': 'Token expired please login'
+                    'message': 'Wrong Token or expired Token please login'
                 }
                 return make_response(jsonify(responseObject), 401)
             return func(*args, **kwargs)
@@ -161,7 +161,7 @@ class Users(object):
                         'status': 'fail',
                         'message': 'Un-authorized Access only Admin allowed'
                     }
-                    return make_response(jsonify(responseObject),401)
+                    return make_response(jsonify(responseObject), 401)
             except jwt.ExpiredSignatureError:
                 responseObject = {
                     'status': 'Fail',
