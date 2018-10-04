@@ -18,13 +18,13 @@ class OrdersTestCase(unittest.TestCase):
             "cost": "120"
         }
         self.user_data = {
-            "email": "shs@mail.com",
+            "email": "dry@mail.com",
             "password": "shssss",
             "address": "utawala",
             "username": "ruiru"
         }
         self.login_data = {
-            "email": "shs@mail.com",
+            "email": "dry@mail.com",
             "password": "shssss"
         }
         self.orders_data = {
@@ -46,7 +46,7 @@ class OrdersTestCase(unittest.TestCase):
             data=json.dumps(self.user_data),
             headers={"content-type": "application/json"}
         )
-        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.status_code, 201)
 
     def test_user_login(self):
         res = self.client().post(
