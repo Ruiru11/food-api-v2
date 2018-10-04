@@ -38,7 +38,7 @@ class Users(object):
 
             response_object = {
                 "status": "fail",
-                "message": "password must have a number one upercase letter and not less than 8 characters"
+                "message": "password format wrong"
             }
             return(make_response(jsonify(response_object)))
         elif len(password) == '':
