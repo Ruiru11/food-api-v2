@@ -9,7 +9,7 @@ from app.views.orders import mod_orders
 from app.views.users import mod_users
 from app.views.menus import mod_menus
 
-db=Database_connection()
+db = Database_connection()
 
 
 def create_app(config_name):
