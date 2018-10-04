@@ -30,7 +30,7 @@ class Orders(object):
             print("ERROR inserting into ORDERS", error)
             response_object = {
                 "satus": "fail",
-                "message": "Email already registered"
+                "message": "cannto"
             }
             return(make_response(jsonify(response_object)))
 
