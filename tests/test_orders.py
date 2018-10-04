@@ -4,7 +4,7 @@ from app import create_app, db
 
 
 class OrdersTestCase(unittest.TestCase):
-    """Represesnts orders and menu testcase """
+    """Represesnts orders testcase """
 
     def setUp(self):
         self.app = create_app(config_name="test")
@@ -27,6 +27,15 @@ class OrdersTestCase(unittest.TestCase):
             "email": "shs@mail.com",
             "password": "shssss"
         }
+        self.orders_data = {
+            "item": "ugali",
+            "description": "seven",
+            "cost": "500"
+        }
+        self.admin_data = {
+            "email": "admin@mail.com",
+            "password": "adminpassword"
+        }
 
         with self.app.app_context():
             db.create_tables()
@@ -36,7 +45,14 @@ class OrdersTestCase(unittest.TestCase):
             "api/v2/signup",
             data=json.dumps(self.user_data),
             headers={"content-type": "application/json"}
+        )
+        self.assertEqual(res.status_code, 200)
 
+    def test_user_login(self):
+        res = self.client().post(
+            "api/v2/signin",
+            data=json.dumps(self.login_data),
+            headers={"content-type": "application/json"}
         )
         self.assertEqual(res.status_code, 200)
 
@@ -50,92 +66,102 @@ class OrdersTestCase(unittest.TestCase):
         return response
 
     def test_create_order(self):
-        # test if an order gets created
         token = self.get_user_token()
         res = self.client().post(
-            "/api/v2/orders",
-            data=json.dumps(self.order_data),
-            headers={
-                "content-type": "application/json",
-                "Authorization": token
-            }
+            "api/v2/orders",
+            data=json.dumps(self.orders_data),
+            headers={"content-type": "application/json",
+                     "Authorization": token
+                     }
         )
         self.assertEqual(res.status_code, 200)
 
-    def test_create_order_without_token(self):
-        # test without authorsation returns unauthorised error 401
+    def test_signin_admin(self):
         res = self.client().post(
-            "/api/v2/orders",
-            data=json.dumps(self.order_data),
-            headers={
-                "content-type": "application/json"
-            }
-        )
-        self.assertEqual(res.status_code, 401)
-
-    def test_get_orders(self):
-        # test if orders can be retrieved
-        token = self.get_user_token()
-        res = self.client().get(
-            "/api/v2/orders",
-            headers={
-                "content-type": "application/json",
-                "Authorization": token
-            }
+            "api/v2/signin",
+            data=json.dumps(self.admin_data),
+            headers={"content-type": "application/json"}
         )
         self.assertEqual(res.status_code, 200)
 
-    def test_get_orders_without_token(self):
-        # test  without authorization returns unauthorised error 401
-        res = self.client().get(
-            "/api/v2/orders",
-            headers={
-                "content-type": "application/json"
-            }
+    def get_admin_token(self):
+        res = self.client().post(
+            "api/v2/signin",
+            data=json.dumps(self.admin_data),
+            headers={"content-type": "application/json"}
         )
-        self.assertEqual(res.status_code, 401)
+        response = json.loads(res.data.decode('utf-8'))['token']
+        return response
 
-    def test_get_orders_by_id(self):
-        # test if an order can be accessed using its id
-        token = self.get_user_token()
+    def test_admin_views_all_orders(self):
+        token = self.get_admin_token()
         res = self.client().get(
-            "/api/v2/orders/7",
-            headers={
-                "content-type": "application/json",
-                "Authorization": token
-            }
+            "api/v2/orders",
+            headers={"content-type": "application/json",
+                     "Authorization": token
+                     }
         )
         self.assertEqual(res.status_code, 200)
 
-    def test_get_orders_by_id_without_token(self):
-        # test without authorization returns unauthorised error 401
+    def test_admin_views_single_order(self):
+        token = self.get_admin_token()
         res = self.client().get(
-            "/api/v2/orders/7",
-            headers={
-                "content-type": "application/json"
-            }
+            "api/v2/orders/7c4961f9-50a8-47c8-b148-81711278da66",
+            headers={"content-type": "application/json",
+                     "Authorization": token
+                     }
         )
-        self.assertEqual(res.status_code, 401)
+        self.assertEqual(res.status_code, 200)
 
-    def test_update_order_status(self):
-        # test update method
-        token = self.get_user_token()
+    def test_updates_order_status(self):
+        token = self.get_admin_token()
         res = self.client().put(
-            "/api/v2/orders/7",
-            headers={
-                "content-type": "application/json",
-                "Authorization": token
-            }
+            "api/v2/orders/7c4961f9-50a8-47c8-b148-81711278da66",
+            headers={"content-type": "application/json",
+                     "Authorization": token
+                     }
         )
         self.assertEqual(res.status_code, 200)
 
-    def test_update_test_without_token(self):
-        # test update an order without token returns unauthorised error 401
-        res = self.client().put(
-            "/api/v2/orders/7",
-            headers={
-                "content-type": "application/json"
-            }
+    def test_admin_get_order_history_of_user(self):
+        token = self.get_admin_token()
+        res = self.client().get(
+            "api/v2/user-orders/ba91c828-4687-40bb-affd-ae634461478b",
+            headers={"content-type": "application/json",
+                     "Authorization": token
+                     }
+        )
+        self.assertEqual(res.status_code, 200)
+
+    def test_normal_user_trying_to_access_user_order_history(self):
+        token = self.get_user_token()
+        res = self.client().get(
+            "api/v2/user-orders/ba91c828-4687-40bb-affd-ae634461478b",
+            headers={"content-type": "application/json",
+                     "Authorization": token
+                     }
+        )
+        self.assertEqual(res.status_code, 401)
+
+    def test_if_normal_user_access_orders(self):
+        # test normal user trying to view admin routes
+        token = self.get_user_token()
+        res = self.client().get(
+            "api/v2/orders",
+            headers={"content-type": "application/json",
+                     "Authorization": token
+                     }
+        )
+        self.assertEqual(res.status_code, 401)
+
+    def test_if_normal_user_views_single_order(self):
+        # test if normal users tries to access a single order
+        token = self.get_user_token()
+        res = self.client().get(
+            "api/v2/orders/7c4961f9-50a8-47c8-b148-81711278da66",
+            headers={"content-type": "application/json",
+                     "Authorization": token
+                     }
         )
         self.assertEqual(res.status_code, 401)
 
