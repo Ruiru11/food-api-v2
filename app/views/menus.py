@@ -23,8 +23,7 @@ def create_menu(res=None, user_id=None, user_role=None):
 
 
 @mod_menus.route('/menus', methods=['GET'])
-@usr.logged_in
-def get_menu(res=None, user_id=None):
+def get_menu():
     return mnu.get_menu()
 
 
