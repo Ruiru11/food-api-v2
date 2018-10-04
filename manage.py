@@ -13,6 +13,7 @@ manager = Manager(app)
 def run():
     app.run()
 
+
 @manager.command
 def init_db():
     try:
@@ -20,6 +21,7 @@ def init_db():
         db.create_tables()
     except (Exception, psycopg2.DatabaseError) as error:
         print("FAILED TO CREATE TABLES", error)
+
 
 @manager.command
 def create_admin():
