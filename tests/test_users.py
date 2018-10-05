@@ -7,7 +7,7 @@ class UsersTestCase(unittest.TestCase):
     """Represesnts users testcase """
 
     def setUp(self):
-        self.app = create_app(configuration="testing")
+        self.app = create_app(environment="testing")
         self.client = self.app.test_client
 
         self.user_data = {
