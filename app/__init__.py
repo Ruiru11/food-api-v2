@@ -1,6 +1,6 @@
 from flask import Flask
 from flask_bcrypt import Bcrypt
-from .config import config_by_name
+from .config import configuration
 
 bcrypt = Bcrypt()
 
@@ -12,9 +12,9 @@ from app.views.menus import mod_menus
 db = Database_connection()
 
 
-def create_app(config_name):
+def create_app(environment):
     app = Flask(__name__)
-    app.config.from_object(config_by_name[config_name])
+    app.config.from_object(configuration[environment])
     app.register_blueprint(mod_orders)
     app.register_blueprint(mod_users)
     app.register_blueprint(mod_menus)
