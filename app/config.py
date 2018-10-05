@@ -8,6 +8,7 @@ class Config:
 
 class DevelopmentConfig(Config):
     DEBUG = True
+    DATABASE_URL = os.getenv('DATABASE_URL')
 
 
 class TestingConfig(Config):
@@ -17,12 +18,13 @@ class TestingConfig(Config):
 
 class ProductionConfig(Config):
     DEBUG = False
+    DATABASE_URL = os.getenv('DATABASE_URL')
 
 
-config_by_name = dict(
-    dev=DevelopmentConfig,
-    test=TestingConfig,
-    prod=ProductionConfig
-)
+configuration = {
+    "development": DevelopmentConfig,
+    "testing": TestingConfig,
+    "production": ProductionConfig
+}
 
 key = Config.SECRET_KEY
