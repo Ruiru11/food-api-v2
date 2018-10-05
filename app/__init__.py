@@ -22,5 +22,5 @@ def create_app(environment):
 
     @app.route('/')
     def root():
-    	return redirect("https://documenter.getpostman.com/view/5475581/RWgnXL7E")
+        return redirect("https://documenter.getpostman.com/view/5475581/RWgnXL7E")
     return app
