@@ -9,28 +9,40 @@ class Orders(object):
         self.connection = Database_connection()
 
     def create_order(self, data):
-        try:
-            order_id = uuid.uuid4()
-            self.connection.cursor.execute("""INSERT INTO ORDERS (order_id, status,
-                            user_id, cost, description, item) 
-            VALUES (%s, %s, %s, %s, %s, %s);""",
-                                           (str(order_id),
-                                            'inprogress',
-                                            data['user_id'],
-                                            data['cost'], data['description'],
-                                            data['item']))
-            print("Inserting DATA into ORDERS")
-            response_object = {
-                "satus": "pass",
-                "message": "order created succesfully"
-            }
-            return(make_response(jsonify(response_object)))
+        get_meal = self.connection.cursor.execute(
+            "SELECT * FROM meals WHERE  meal_id=%s ", [data['meal_id']])
+        meal = self.connection.cursor.fetchone()
+        print("meal>>>", meal)
+        if meal:
+            try:
+                order_id = uuid.uuid4()
 
-        except (Exception, psycopg2.DatabaseError) as error:
-            print("ERROR inserting into ORDERS", error)
+                self.connection.cursor.execute("""INSERT INTO ORDERS (order_id, status,
+                                user_id, description, item, meal_id)
+                VALUES (%s, %s, %s, %s, %s, %s);""",
+                                               (str(order_id),
+                                                'inprogress',
+                                                data['user_id'],
+                                                data['description'],
+                                                data['item'], data['meal_id']))
+                print("Inserting DATA into ORDERS")
+                response_object = {
+                    "satus": "pass",
+                    "message": "order created succesfully"
+                }
+                return(make_response(jsonify(response_object)))
+
+            except (Exception, psycopg2.DatabaseError) as error:
+                print("ERROR inserting into ORDERS", error)
+                response_object = {
+                    "satus": "fail",
+                    "message": "Problems while creating orders"
+                }
+                return(make_response(jsonify(response_object)))
+        else:
             response_object = {
-                "satus": "fail",
-                "message": "cannto"
+                "status": "fail",
+                "message": "meal with given id does not exist"
             }
             return(make_response(jsonify(response_object)))
 

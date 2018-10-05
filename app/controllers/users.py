@@ -14,39 +14,46 @@ class Users(object):
         self.connection = Database_connection()
 
     def validate_email(self, email):
-        match = re.match(
-            r'(^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$)',
-            email)
-        if match is None:
+        if re.search('[@"]', email) is None:
             response_object = {
                 "status": "fail",
-                "message": "Please enter a valid email"
+                "message": "@ missing in email"
             }
             return(make_response(jsonify(response_object)), 403)
+        elif re.search('[.]', email) is None:
+            response_object = {
+                "status": "fail",
+                "message": ". missing in email"
+            }
+            return(make_response(jsonify(response_object)))
         elif len(email) == '':
             response_object = {
                 "status": "fail",
-                "message": " email cannot be empty"
+                "message": "email cannot be empty"
             }
             return(make_response(jsonify(response_object)))
         else:
             return True
 
     def validate_password(self, password):
-        match = re.match(r'[a-z]{4,}', password)
-        if match is None:
-
+        if len(password) < 4:
             response_object = {
                 "status": "fail",
-                "message": "password format wrong"
+                "message": "password must be more than 4 characters"
             }
             return(make_response(jsonify(response_object)))
-        elif len(password) == '':
+        elif re.search('[0-9]', password) is None:
             response_object = {
                 "status": "fail",
-                "message": " password cannot be empty"
+                "message": "password must contain a digit"
             }
-            return(make_response(jsonify(response_object)), 403)
+            return(make_response(jsonify(response_object)))
+        elif re.search('[A-Z]', password) is None:
+            response_object = {
+                "status": "fail",
+                "message": "password must contain an uperrcase letter"
+            }
+            return(make_response(jsonify(response_object)))
         else:
             return True
 
@@ -69,7 +76,7 @@ class Users(object):
     def create_user(self, data):
         username = self.validate_username(data['username'])
         email = self.validate_email(data['email'])
-        password = self.validate_password(data['email'])
+        password = self.validate_password(data['password'])
         if email and password and username is True:
             try:
                 user_id = uuid.uuid4()
@@ -102,7 +109,7 @@ class Users(object):
         elif username is not True:
             return username
         else:
-            return email and password and username
+            return response
 
     def all_users(self):
         self.connection.cursor.execute("""SELECT * FROM users""")

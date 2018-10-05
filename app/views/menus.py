@@ -14,7 +14,7 @@ usr = Users()
 @usr.check_admin
 def create_menu(res=None, user_id=None, user_role=None):
     parser = reqparse.RequestParser()
-    parser.add_argument('name', type=str, location='json')
+    parser.add_argument('dish', type=str, location='json')
     parser.add_argument('price', type=int, location='json')
     parser.add_argument('description', type=str, location='json')
     data = parser.parse_args()

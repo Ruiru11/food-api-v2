@@ -16,7 +16,7 @@ def create_order(res=None, user_id=None):
     parser = reqparse.RequestParser()
     parser.add_argument('user_id', user_id)
     parser.add_argument('item', type=str, location="json")
-    parser.add_argument('order_id', type=int, location="json")
+    parser.add_argument('meal_id', type=str, location="json")
     parser.add_argument('description', type=str, location="json")
     parser.add_argument('cost', type=int, location="json")
     data = parser.parse_args()
