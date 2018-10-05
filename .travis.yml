@@ -7,6 +7,10 @@ install:
   - pip install coveralls
   - pip install pytest-cov
 
+before script:
+  - psql -c 'create database fastfoodfast:' -U postgress
+  - psql -c 'create database fastfoodfast_test:' -U postgress
+  
 script: 
   - pytest --cov=tests
 
