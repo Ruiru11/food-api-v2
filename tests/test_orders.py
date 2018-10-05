@@ -7,7 +7,7 @@ class OrdersTestCase(unittest.TestCase):
     """Represesnts orders testcase """
 
     def setUp(self):
-        self.app = create_app(configuration="testing")
+        self.app = create_app(environment="testing")
         self.client = self.app.test_client
 
         self.order_data = {
