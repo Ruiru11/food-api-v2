@@ -19,4 +19,8 @@ def create_app(environment):
     app.register_blueprint(mod_users)
     app.register_blueprint(mod_menus)
     db
+
+    @app.route('/')
+    def root():
+    	return "hello"
     return app
