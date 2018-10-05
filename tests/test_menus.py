@@ -7,7 +7,7 @@ class MenusTestCase(unittest.TestCase):
     """ TestCase for Menus"""
 
     def setUp(self):
-        self.app = create_app(config_name="test")
+        self.app = create_app(configuration="testing")
         self.client = self.app.test_client
         self.menu_data = {
             "name": "naramat",
